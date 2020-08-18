@@ -1,6 +1,7 @@
 class Blog {
-    constructor(id, createdOn, title, content, author) {
+    constructor(id, email, createdOn, title, content, author) {
       this.id = id;
+      this.email = email;
       this.createdOn = createdOn;
       this.title = title;
       this.content = content;

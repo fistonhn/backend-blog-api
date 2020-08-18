@@ -14,13 +14,14 @@ const signup = (req, res) => {
   if (takenEmail) return res.status(409).json({ status: 409, message: 'Email address already taken' });
 
   const id = uuidv4();
+  const role = "guest";
 
   let { name, email, password } = req.body;
 
   password = encryptPassword(password);
-  const user = new User(id, name, email, password);
+  const user = new User(id, role, name, email, password);
 
-  const token = generateToken(id, user.email);
+  const token = generateToken(id, user.email, role);
 
   users.push(user);
 
