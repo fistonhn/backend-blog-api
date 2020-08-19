@@ -30,5 +30,12 @@ const getAllBlogs = (req, res) => {
   res.status(200).json({ status: 200, data: allBlogs });
 };
 
+const getOneBlog = (req, res) => {
+  const blog = blogs.find((blog) => blog.id === req.params.id );
 
-export { createNewBlog, getAllBlogs };
+  if (!blog) return res.status(404).json({ status: 404, error: `There is no blog with id ${req.params.id} ` });
+
+  return res.status(200).json({ status: 200, data: blog });
+};
+
+export { createNewBlog, getAllBlogs, getOneBlog };
