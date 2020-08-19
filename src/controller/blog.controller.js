@@ -55,4 +55,22 @@ const updateBlog = (req, res) => {
   return res.status(200).json({ status: 200, message: 'blog successfully updated', data: blog });
 };
 
-export { createNewBlog, getAllBlogs, getOneBlog, updateBlog };
+const deleteBlog = (req, res) => {
+     
+  const blog = blogs.find((blog) => blog.id === req.params.id );
+
+  if (!blog) return res.status(404).json({ status: 404, error: `There is no blog with id ${req.params.id} ` });
+
+  
+  const authhEmail = req.authUser.userEmail;
+  if (blog.email != authhEmail) return res.status(401).send({ status: 401, message: 'You are not authorized to perform this action' });
+
+  const index = blogs.indexOf(blog);
+
+  blogs.splice(index, 1);
+
+  return res.status(200).json({ status: 200, message: 'blog successfully deleted' });
+};
+
+
+export { createNewBlog, getAllBlogs, getOneBlog, updateBlog, deleteBlog };
