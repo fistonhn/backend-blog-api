@@ -7,7 +7,7 @@ const signupInput = (req) => {
     password: Joi.string().required().min(6).max(15),
   });
 
-  return Joi.validate(req.body, schema);
+  return schema.validate(req.body);
 };
 
 const loginInput = (req) => {
@@ -16,7 +16,7 @@ const loginInput = (req) => {
     password: Joi.string().required().min(6).max(15),
   });
 
-  return Joi.validate(req.body, schema);
+  return schema.validate(req.body);
 };
 
 export { signupInput, loginInput };

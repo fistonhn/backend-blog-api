@@ -36,6 +36,19 @@ if (!message) return res.status(404).json({ status: 404, error: `There is no mes
 
 return res.status(200).json({ status: 200, data: message });
 };
+
+const deleteMessage = (req, res) => {
+     
+    const message = messages.find((message) => message.id === req.params.id );
+  
+    if (!message) return res.status(404).json({ status: 404, error: `There is no message with id: ${req.params.id} ` });
+  
+    const index = messages.indexOf(message);
+  
+    messages.splice(index, 1);
+  
+    return res.status(200).json({ status: 200, message: 'message successfully deleted' });
+};
   
 
-export { createNewMessage, getAllMessages, getOneMessage };
+export { createNewMessage, getAllMessages, getOneMessage, deleteMessage };
