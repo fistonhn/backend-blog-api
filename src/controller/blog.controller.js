@@ -30,5 +30,29 @@ const getAllBlogs = (req, res) => {
   res.status(200).json({ status: 200, data: allBlogs });
 };
 
+const getOneBlog = (req, res) => {
+  const blog = blogs.find((blog) => blog.id === req.params.id );
 
-export { createNewBlog, getAllBlogs };
+  if (!blog) return res.status(404).json({ status: 404, error: `There is no blog with id ${req.params.id} ` });
+
+  return res.status(200).json({ status: 200, data: blog });
+};
+
+const updateBlog = (req, res) => {
+
+  const blog = blogs.find((blog) => blog.id === req.params.id );
+
+  if (!blog) return res.status(404).json({ status: 404, error: `There is no blog with id ${req.params.id} ` });
+
+  const authhEmail = req.authUser.userEmail;
+  if (blog.email != authhEmail) return res.status(401).send({ status: 401, message: 'You are not authorized to perform this action' });
+
+
+  blog.title = req.body.title;
+  blog.content = req.body.content;
+  blog.author = req.body.author;
+
+  return res.status(200).json({ status: 200, message: 'blog successfully updated', data: blog });
+};
+
+export { createNewBlog, getAllBlogs, getOneBlog, updateBlog };
