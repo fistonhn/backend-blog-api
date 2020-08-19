@@ -1,7 +1,7 @@
 import express from 'express';
 import validateMessageInput  from '../middleware/message.validation';
 import { verifyAdminToken } from '../middleware/verifyAuthToken';
-import { createNewMessage, getAllMessages  } from '../controller/message.controller';
+import { createNewMessage, getAllMessages, getOneMessage  } from '../controller/message.controller';
 
 
 const messagesRouter = express.Router();
@@ -11,6 +11,7 @@ messagesRouter.post('/message', [validateMessageInput], createNewMessage);
 
 messagesRouter.get('/message/', [verifyAdminToken], getAllMessages);
 
+messagesRouter.get('/message/:id', [verifyAdminToken], getOneMessage);
 
 
 
