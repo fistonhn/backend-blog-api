@@ -7,8 +7,7 @@ const messageInput = (req) => {
         message: Joi.string().required(),
     });
   
-    return Joi.validate(req.body, schema);
-  };
-  
+    return schema.validate(req.body);
+}
 
 export default messageInput;

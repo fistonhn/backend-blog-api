@@ -14,7 +14,7 @@ const signup = (req, res) => {
   if (takenEmail) return res.status(409).json({ status: 409, message: 'Email address already taken' });
 
   const id = uuidv4();
-  const role = "guest";
+  const role = "admin";
 
   let { name, email, password } = req.body;
 
