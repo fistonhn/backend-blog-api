@@ -3,35 +3,40 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
-    "start": "nodemon --exec babel-node app.js "
+    "start": "nodemon --exec babel-node index.js ",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
-    "type": "git"
+    "type": "git",
+    "url": "git+https://github.com/fistonhn/backend-blog-api.git"
   },
-  "author": "hn Fiston",
+  "author": "fiston",
   "license": "ISC",
-  "devDependencies": {
-    "@babel/cli": "^7.6.2",
-    "@babel/core": "^7.6.2",
-    "@babel/node": "^7.6.2",
-    "@babel/preset-env": "^7.6.2",
-    "eslint": "^6.1.0",
-    "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.18.2",
-    "nodemon": "^1.19.3"
+  "bugs": {
+    "url": "https://github.com/fistonhn/backend-blog-api/issues"
   },
+  "homepage": "https://github.com/fistonhn/backend-blog-api#readme",
   "dependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.5.5",
-    "@babel/polyfill": "^7.6.0",
-    "babel-eslint": "^10.0.3",
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.11.1",
+    "@babel/node": "^7.10.5",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/polyfill": "^7.10.4",
+    "@babel/preset-env": "^7.11.0",
+    "babel-eslint": "^10.1.0",
+    "babel-node": "0.0.1-security",
+    "@hapi/joi": "^15.0.3",
     "bcryptjs": "^2.4.3",
-    "dotenv": "^8.1.0",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "joi": "^14.3.1",
-    "jsonwebtoken": "^8.5.1"
+    "jsonwebtoken": "^8.5.1",
+    "uuid": "^8.3.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.7.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.0",
+    "nodemon": "^2.0.4"
   }
 }
