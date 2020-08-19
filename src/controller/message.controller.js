@@ -27,7 +27,15 @@ const getAllMessages = (req, res) => {
     - (new Date(a.createdOn).getTime()));
   
     res.status(200).json({ status: 200, data: allMessages });
-  };
+};
+
+const getOneMessage = (req, res) => {
+const message = messages.find((message) => message.id === req.params.id );
+
+if (!message) return res.status(404).json({ status: 404, error: `There is no message with id: ${req.params.id} ` });
+
+return res.status(200).json({ status: 200, data: message });
+};
   
 
-export { createNewMessage, getAllMessages };
+export { createNewMessage, getAllMessages, getOneMessage };
