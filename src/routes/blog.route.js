@@ -1,7 +1,7 @@
 import express from 'express';
 import validateBlogInput  from '../middleware/blog.validation';
 import { verifyAuthToken } from '../middleware/verifyAuthToken';
-import { createNewBlog, getAllBlogs, getOneBlog } from '../controller/blog.controller';
+import { createNewBlog, getAllBlogs, getOneBlog, updateBlog, deleteBlog } from '../controller/blog.controller';
 
 
 const blogsRouter = express.Router();
@@ -14,5 +14,6 @@ blogsRouter.get('/blog/:id', getOneBlog);
 
 blogsRouter.patch('/blog/:id', [verifyAuthToken, validateBlogInput], updateBlog);
 
+blogsRouter.delete('/blog/:id', [verifyAuthToken], deleteBlog);
 
 export default blogsRouter;
