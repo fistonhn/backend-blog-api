@@ -1,5 +1,6 @@
 import express from 'express';
 import usersRouter from './src/routes/user.route';
+import blogsRouter from './src/routes/blog.route';
 import config from './src/config/configulation';
 
 const app = express();
@@ -7,6 +8,8 @@ const app = express();
 app.use(express.json());
 
 app.use('/api', usersRouter);
+
+app.use('/api', blogsRouter);
 
 app.use('/', (req, res) => { res.status(400).send({ status: 400, error: 'Incorrect route! try again' }); });
 
