@@ -10,5 +10,13 @@ const signupInput = (req) => {
   return Joi.validate(req.body, schema);
 };
 
+const loginInput = (req) => {
+  const schema = Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(6).max(15),
+  });
 
-export { signupInput };
+  return Joi.validate(req.body, schema);
+};
+
+export { signupInput, loginInput };
