@@ -15,7 +15,7 @@ app.use('/api', blogsRouter);
 app.use('/api', messagesRouter);
 
 
-app.use('/', (req, res) => { res.status(400).send({ status: 400, error: 'Incorrect route! try again' }); });
+app.use('/', (req, res) => { res.status(200).send({ status: 200, message: 'welcome to my app' }); });
 
 const { port } = config;
 
