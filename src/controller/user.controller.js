@@ -14,7 +14,7 @@ const signup = (req, res) => {
   if (takenEmail) return res.status(409).json({ status: 409, message: 'Email address already taken' });
 
   const id = uuidv4();
-  const role = "admin";
+  const role = req.body.role  ||  "guest";
 
   let { name, email, password } = req.body;
 
@@ -43,4 +43,17 @@ const login = (req, res) => {
   res.status(200).json({ status: 200, message: 'loggin successfull', data: { token } });
 };
 
-export { signup, login, users };
+
+const getAllUsers = (req, res) => {
+
+  const usersFound = users.find((user) => user );
+
+  if (!usersFound) return res.status(404).json({ status: 404, error: 'There are no available users' });
+
+  const allusers = users.sort((a, b) => (new Date(b.createdOn)).getTime()
+  - (new Date(a.createdOn).getTime()));
+
+  res.status(200).json({ status: 200, data: allusers });
+};
+
+export { signup, login, getAllUsers, users };
