@@ -26,17 +26,17 @@ const signup = (req, res) => {
   users.push(user);
 
 
-  res.status(201).json({ status: 201, message: 'User created successfull', data: { token } });
+  res.status(201).json({ status: 201, message: 'User created successfully', data: { token } });
 };
 
 const login = (req, res) => {
   const { email, password } = req.body;
 
   const usersFound = users.find(((userInfo) => userInfo.email === email));
-  if (!usersFound) return res.status(404).send({ status: 404, message: 'No associated account with this email. 😩' });
+  if (!usersFound) return res.status(404).send({ status: 404, message: 'No associated account with this email' });
 
   const isPasswordValid = decryptPassword(password, usersFound.password);
-  if (!isPasswordValid) return res.status(401).json({ status: 401, error: 'Incorrect password!' });
+  if (!isPasswordValid) return res.status(401).json({ status: 401, message: 'Incorrect password!' });
 
   const token = generateToken(usersFound.id, usersFound.email);
 
@@ -48,7 +48,7 @@ const getAllUsers = (req, res) => {
 
   const usersFound = users.find((user) => user );
 
-  if (!usersFound) return res.status(404).json({ status: 404, error: 'There are no available users' });
+  if (!usersFound) return res.status(404).json({ status: 404, message: 'There are no available users' });
 
   const allusers = users.sort((a, b) => (new Date(b.createdOn)).getTime()
   - (new Date(a.createdOn).getTime()));
