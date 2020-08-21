@@ -1,9 +1,7 @@
-import { v4 as uuidv4 } from 'uuid';
 import User from '../models/user.model';
 import generateToken from '../helper/generateAuthToken';
 import { encryptPassword, decryptPassword } from '../helper/hashedPassword';
 
-uuidv4(); 
 
 const users = [];
 
@@ -13,7 +11,7 @@ const signup = (req, res) => {
   const takenEmail = users.find((user) => user.email === req.body.email);
   if (takenEmail) return res.status(409).json({ status: 409, message: 'Email address already taken' });
 
-  const id = uuidv4();
+  const id = users.length + 1;
   const role = req.body.role  ||  "guest";
 
   let { name, email, password } = req.body;
@@ -56,4 +54,13 @@ const getAllUsers = (req, res) => {
   res.status(200).json({ status: 200, data: allusers });
 };
 
-export { signup, login, getAllUsers, users };
+const getSpecificUser = (req, res) => {
+  const user = users.find((user) => user.id == req.params.id );
+
+  if (!user) return res.status(404).json({ status: 404, message: 'No user found' });
+
+  return res.status(200).json({ status: 200, data: user });
+};
+
+
+export { signup, login, getAllUsers, getSpecificUser, users };

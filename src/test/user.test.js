@@ -1,19 +1,26 @@
 import dotenv from 'dotenv';
+// import { v4 as uuidv4 } from 'uuid';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../../index';
 import usersTest from '../models/user.test.data';
 import generateToken from '../helper/generateAuthToken';
+// import User from '../models/user.model';
+
 
 
 const { expect } = chai;
 chai.use(chaiHttp);
 
-
+// uuidv4(); 
 dotenv.config();
 
 
-const token = generateToken(usersTest[3].email, usersTest[3].role);
+// const id = uuidv4();
+// const user = new User(id, usersTest[3].role, usersTest[3].name, usersTest[3].email, usersTest[3].password);
+ 
+
+const token = generateToken(usersTest[3].id,usersTest[3].email, usersTest[3].role);
 
 
 
@@ -45,6 +52,7 @@ describe('when user try to visit my app ', () => {
         .get('/api/auth/users')
         .set('Authorization', token)
         .end((err, res) => {
+          console.log(res.data)
           expect(res.status).to.equal(404);
           expect(res.body.message).to.equal('There are no available users');
           done();
@@ -252,3 +260,32 @@ describe(' When the user try to login --api/auth/signin', () => {
 
   });
   
+
+  // admin view specific user
+
+  describe('When the admin try to view a specific user--- GET user,api/user/id', () => {
+    it('should return user not found ', (done) => {
+      chai
+        .request(app)
+        .get('/api/auth/user/45')
+        .set('Authorization', token)
+        .end((err, res) => {
+          expect(res.body).to.be.an('object');
+          expect(res.status).to.equal(404);
+          expect(res.body.status).to.equal(404);
+          expect(res.body.message).to.equal('No user found');
+          done();
+        });
+    });
+    it('should return selected user', (done) => {
+      chai
+        .request(app)
+        .get('/api/auth/user/1')
+        .set('Authorization', token)
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          expect(res.body.status).to.equal(200);
+          done();
+        });
+    });
+  });
