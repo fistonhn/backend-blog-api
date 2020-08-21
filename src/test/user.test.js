@@ -289,3 +289,39 @@ describe(' When the user try to login --api/auth/signin', () => {
         });
     });
   });
+
+
+
+  // update user
+
+  describe('When the admin try to view a specific user--- GET user,api/user/id', () => {
+    it('should return user successfull updated ', (done) => {
+      chai
+        .request(app)
+        .patch('/api/auth/user/1')
+        .set('Accept', 'application/json')
+        .set('Authorization', token)
+        .send(usersTest[11])
+        .end((err, res) => {
+          expect(res.body).to.be.an('object');
+          expect(res.status).to.equal(200);
+          expect(res.body.message).to.equal('user successfully updated');
+          done();
+        });
+    });
+
+    it('should return user email is not formed well', (done) => {
+      chai
+        .request(app)
+        .patch('/api/auth/user/1')
+        .set('Accept', 'application/json')
+        .set('Authorization', token)
+        .send(usersTest[12])
+        .end((err, res) => {
+          expect(res.body).to.be.an('object');
+          expect(res.status).to.equal(400);
+          done();
+        });
+    });
+  });
+

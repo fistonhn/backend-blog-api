@@ -1,4 +1,4 @@
-import { signupInput, loginInput } from '../helper/user.input';
+import { signupInput, loginInput, userUpdateInput } from '../helper/user.input';
 
 
 const validateSignup = (req, res, next) => {
@@ -15,5 +15,13 @@ const validateLogin = (req, res, next) => {
   next();
 };
 
+const validateUserUpdate = (req, res, next) => {
+  const { error } = userUpdateInput(req);
+  if (error) return res.status(400).json({ status: res.statusCode, error: error.details[0].message });
 
-export { validateSignup, validateLogin };
+  next();
+};
+
+
+
+export { validateSignup, validateLogin, validateUserUpdate };

@@ -62,5 +62,27 @@ const getSpecificUser = (req, res) => {
   return res.status(200).json({ status: 200, data: user });
 };
 
+const updateSpecificUser = (req, res) => {
+  const user = users.find((user) => user.id == req.params.id );
 
-export { signup, login, getAllUsers, getSpecificUser, users };
+  if (!user) return res.status(404).json({ status: 404, message: 'No user found' });
+
+  let name = req.body.name;
+  let email = req.body.email;
+  let password = req.body.password;
+  let role = req.body.role;
+
+  if(!name){ name = user.name; }
+  if(!password){ password = user.password; }
+  if(!role){ role = user.role; }
+  if(!email){ email = user.email; }
+
+  user.name = name;
+  user.email = email;
+  user.password = password;
+  user.role = role;
+
+  return res.status(200).json({ status: 200, message: 'user successfully updated', data: user });
+};
+
+export { signup, login, getAllUsers, getSpecificUser, updateSpecificUser, users };
