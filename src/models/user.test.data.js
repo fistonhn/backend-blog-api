@@ -64,6 +64,21 @@ const usersTest = [
         role : 'admin'
     },
 
+    //update admin 
+
+    {
+        name: 'habimana',
+        email: 'habimana@gmail.com',
+        password: '444444',
+        role : 'admin'
+    },
+    {
+        name: 'habimana',
+        email: 'habimana.com',
+        password: '444444',
+        role : 'admin'
+    },
+
 
 
   

@@ -20,4 +20,16 @@ const loginInput = (req) => {
   return schema.validate(req.body);
 };
 
-export { signupInput, loginInput };
+const userUpdateInput = (req) => {
+  const schema = Joi.object().keys({
+    name: Joi.string().optional().min(2).max(50),
+    email: Joi.string().optional().email(),
+    password: Joi.string().optional().min(6).max(15),
+    role: Joi.string().optional()
+  });
+
+  return schema.validate(req.body);
+};
+
+
+export { signupInput, loginInput, userUpdateInput };
