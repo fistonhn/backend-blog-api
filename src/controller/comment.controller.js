@@ -35,5 +35,19 @@ const getAllComments = (req, res) => {
     res.status(200).json({ status: 200, data: allComments });
   };
   
+  const deleteComment = (req, res) => {
+     
+    const comment = comments.find((comment) => comment.id == req.params.id );
+  
+    if (!comment) return res.status(404).json({ status: 404, error: `There is no comment with id ${req.params.id} ` });
 
-export { createComment, getAllComments };
+  
+    const index = comments.indexOf(comment);
+  
+    comments.splice(index, 1);
+  
+    return res.status(200).json({ status: 200, message: 'comment successfully deleted' });
+  };
+  
+
+export { createComment, getAllComments, deleteComment };
