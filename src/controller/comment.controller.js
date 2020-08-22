@@ -20,5 +20,20 @@ const createComment = (req, res) => {
   res.status(201).json({ status: 201, message: 'comment successfully created', data: comment });
 };
 
+const getAllComments = (req, res) => {
 
-export { createComment };
+    const commentFound = comments.find((comment) =>  comment.blogId == req.params.id );
+
+  
+    if (!commentFound) return res.status(404).json({ status: 404, message: 'There are no created comment' });
+
+    console.log(commentFound)
+  
+    const allComments = comments.sort((a, b) => (new Date(b.createdOn)).getTime()
+    - (new Date(a.createdOn).getTime()));
+  
+    res.status(200).json({ status: 200, data: allComments });
+  };
+  
+
+export { createComment, getAllComments };
