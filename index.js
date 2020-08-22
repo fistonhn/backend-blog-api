@@ -1,6 +1,7 @@
 import express from 'express';
 import usersRouter from './src/routes/user.route';
 import blogsRouter from './src/routes/blog.route';
+import commentRouter from './src/routes/comment.route'
 import messagesRouter from './src/routes/message.route';
 import config from './src/config/configulation';
 
@@ -14,6 +15,7 @@ app.use('/api', blogsRouter);
 
 app.use('/api', messagesRouter);
 
+app.use('/api', commentRouter);
 
 app.use('/', (req, res) => { res.status(200).send({ status: 200, message: 'welcome to my app' }); });
 
