@@ -45,3 +45,34 @@ describe('When the user commenting --api/auth/signup', () => {
 
       });
 })
+
+
+  // get all comments 
+
+  describe('When comments tries to view all comments--- GET comment -- api/all/comment/1', () => {
+
+    it('should return gets all comments', (done) => {
+      chai
+        .request(app)
+        .get('/api/all/comment/1')
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          done();
+        });
+    });
+
+    it('should return the comments does not exist', (done) => {
+        chai
+          .request(app)
+          .get('/api/all/comment/5')
+          .end((err, res) => {
+            expect(res.status).to.equal(404);
+            expect(res.body.message).to.equal('There are no created comment');
+            done();
+          });
+      });
+  
+
+  });
+
+
