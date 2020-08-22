@@ -85,4 +85,18 @@ const updateSpecificUser = (req, res) => {
   return res.status(200).json({ status: 200, message: 'user successfully updated', data: user });
 };
 
-export { signup, login, getAllUsers, getSpecificUser, updateSpecificUser, users };
+const deleteSpecificUser = (req, res) => {
+  const user = users.find((user) => user.id == req.params.id );
+
+  if (!user) return res.status(404).json({ status: 404, message: 'No user found' });
+
+  const index = users.indexOf(user);
+
+  users.splice(index, 1);
+
+  return res.status(200).json({ status: 200, message: 'user successfully deleted' });
+
+};
+
+
+export { signup, login, getAllUsers, getSpecificUser, updateSpecificUser, deleteSpecificUser, users };
