@@ -79,4 +79,4 @@ const deleteBlog = (req, res) => {
 };
 
 
-export { createNewBlog, getAllBlogs, getOneBlog, updateBlog, deleteBlog };
+export { createNewBlog, getAllBlogs, getOneBlog, updateBlog, deleteBlog, blogs };
