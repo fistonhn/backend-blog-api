@@ -46,8 +46,23 @@ describe('When the user commenting --api/auth/signup', () => {
             expect(res.body.message).to.equal('comment successfully created');
             done();
           });
+      });
+
+      it('should return There is no blog with that id', (done) => {
+        chai
+          .request(app)
+          .post('/api/comment/5')
+          .set('Accept', 'application/json')
+          .send(commentsTest[1])
+          .end((err, res) => {
+            expect(res.body).to.be.an('object');
+            expect(res.status).to.equal(404);
+            expect(res.body.status).to.equal(404);
+            done();
+          });
 
       });
+
 })
 
 

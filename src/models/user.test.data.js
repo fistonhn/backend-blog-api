@@ -78,6 +78,13 @@ const usersTest = [
         password: '444444',
         role : 'admin'
     },
+    {
+        name: 'habimana',
+        email: 'eric@gmail.com',
+        password: '444444',
+        role : 'guest'
+    },
+
 
 
 

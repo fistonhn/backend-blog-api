@@ -1,14 +1,14 @@
 import Comment from '../models/comment.model';
-// import { blogs } from '../controller/blog.controller'
+import { blogs } from '../controller/blog.controller'
 
 
 const comments = [];
 
 const createComment = (req, res) => {
 
-    // const blog = blogs.find((blog) => blog.id == req.params.id );
+    const blog = blogs.find((blog) => blog.id == req.params.id );
 
-    // if (!blog) return res.status(404).json({ status: 404, error: `There is no blog with id ${req.params.id} ` });
+    if (!blog) return res.status(404).json({ status: 404, error: `There is no blog with id ${req.params.id} ` });
 
   const id = comments.length + 1;
   const blogId = req.params.id;
@@ -27,7 +27,6 @@ const getAllComments = (req, res) => {
   
     if (!commentFound) return res.status(404).json({ status: 404, message: 'There are no created comment' });
 
-    console.log(commentFound)
   
     const allComments = comments.sort((a, b) => (new Date(b.createdOn)).getTime()
     - (new Date(a.createdOn).getTime()));
