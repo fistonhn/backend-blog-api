@@ -19,7 +19,7 @@ const getAllBlogs = (req, res) => {
 
   const blogFound = blogs.find((blog) => blog );
 
-  if (!blogFound) return res.status(404).json({ status: 404, error: 'There are no created blogs' });
+  if (!blogFound) return res.status(404).json({ status: 404, message: 'There are no available blogs' });
 
   const allBlogs = blogs.sort((a, b) => (new Date(b.createdOn)).getTime()
   - (new Date(a.createdOn).getTime()));

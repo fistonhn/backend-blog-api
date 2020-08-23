@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">85.71% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>14/28</span>
+                <span class='fraction'>24/28</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">30% </span>
+                <span class="strong">70% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>3/10</span>
+                <span class='fraction'>7/10</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>2/4</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">56% </span>
+                <span class="strong">92% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>14/25</span>
+                <span class='fraction'>23/25</span>
             </div>
         
             
@@ -55,7 +55,7 @@
             Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
         </p>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -112,21 +112,21 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -160,22 +160,22 @@ import dotenv from 'dotenv';
 &nbsp;
 dotenv.config();
 &nbsp;
-const <span class="fstat-no" title="function not covered" >verifyAuthToken </span>= (req, res, next) =&gt; {
-  const authHeader = <span class="cstat-no" title="statement not covered" >req.headers.authorization;</span>
-<span class="cstat-no" title="statement not covered" >  if (typeof authHeader === 'undefined') {</span>
-<span class="cstat-no" title="statement not covered" >    res.</span>status(401).json({ err: 'Unauthorised - Header Not Set' });
-<span class="cstat-no" title="statement not covered" >    return;</span>
+const verifyAuthToken = (req, res, next) =&gt; {
+  const authHeader = req.headers.authorization;
+  if (typeof authHeader === 'undefined') {
+    res.status(401).json({ error: 'Unauthorised - Header Not Set' });
+    return;
   }
-  const token = <span class="cstat-no" title="statement not covered" >authHeader;</span>
+  const token = authHeader;
 &nbsp;
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    jwt.v</span>erify(token, process.env.JWT_PRIVATE_KEY, <span class="fstat-no" title="function not covered" >(e</span>rr, decodedToken) =&gt; {
+    jwt.verify(token, process.env.JWT_PRIVATE_KEY, (err, decodedToken) =&gt; {
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    if (err) <span class="cstat-no" title="statement not covered" >return r</span></span>es.status(401).json({ error: 'Unauthorised or Invalid Token', err });
+    if (err) return res.status(401).json({ error: 'Unauthorised or Invalid Token', err });
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    req.</span>authUser = decodedToken;
+    req.authUser = decodedToken;
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    next();</span>
+    next();
   });
 };
 &nbsp;
@@ -211,7 +211,7 @@ export { verifyAuthToken, verifyAdminToken };
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank">istanbul</a>
-                at Sat Aug 22 2020 22:57:04 GMT+0200 (Eastern European Standard Time)
+                at Sun Aug 23 2020 15:37:19 GMT+0200 (Eastern European Standard Time)
             </div>
         </div>
         <script src="../../../prettify.js"></script>
