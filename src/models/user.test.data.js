@@ -84,6 +84,31 @@ const usersTest = [
         password: '444444',
         role : 'guest'
     },
+    {
+        name: 'habimana',
+        email: 'habimana@gmail.com',
+        password: '444444',
+    },
+    {
+        email: 'habimana@gmail.com',
+        password: '444444',
+        role : 'admin'
+    },
+    {
+        name: 'habimana',
+        password: '444444',
+        role : 'admin'
+    },
+    {
+        name: 'habimana',
+        email: 'habimana@gmail.com',
+        role : 'admin'
+    },
+    {
+        name: 'fiston',
+        email: 'dro@gmail.com',
+        password: '111111',
+    },
 
 
 

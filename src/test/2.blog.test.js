@@ -75,6 +75,22 @@ describe('When the user try to create a blog --api/blog', () => {
             done();
           });
       });
+
+      it('should return blog 2 created successfull', (done) => {
+        chai
+          .request(app)
+          .post('/api/blog')
+          .set('Accept', 'application/json')
+          .set('Authorization', token)
+          .send(blogsTest[3])
+          .end((err, res) => {
+            expect(res.body).to.be.an('object');
+            expect(res.status).to.equal(201);
+            expect(res.body.status).to.equal(201);
+            expect(res.body.message).to.equal('blog successfully created');
+            done();
+          });
+      });
 })
 
 
@@ -139,6 +155,64 @@ describe('When the user try to create a blog --api/blog', () => {
         });
     });
 
+    it('should return blog successfull updated ', (done) => {
+      chai
+        .request(app)
+        .patch('/api/blog/1')
+        .set('Accept', 'application/json')
+        .set('Authorization', token)
+        .send(blogsTest[4])
+        .end((err, res) => {
+          expect(res.body).to.be.an('object');
+          expect(res.status).to.equal(200);
+          expect(res.body.message).to.equal('blog successfully updated');
+          done();
+        });
+    });
+    it('should return blog successfull updated ', (done) => {
+      chai
+        .request(app)
+        .patch('/api/blog/1')
+        .set('Accept', 'application/json')
+        .set('Authorization', token)
+        .send(blogsTest[5])
+        .end((err, res) => {
+          expect(res.body).to.be.an('object');
+          expect(res.status).to.equal(200);
+          expect(res.body.message).to.equal('blog successfully updated');
+          done();
+        });
+    });
+    it('should return blog successfull updated ', (done) => {
+      chai
+        .request(app)
+        .patch('/api/blog/1')
+        .set('Accept', 'application/json')
+        .set('Authorization', token)
+        .send(blogsTest[6])
+        .end((err, res) => {
+          expect(res.body).to.be.an('object');
+          expect(res.status).to.equal(200);
+          expect(res.body.message).to.equal('blog successfully updated');
+          done();
+        });
+    });
+
+    it('should return blog with  name successfull updated ', (done) => {
+      chai
+        .request(app)
+        .patch('/api/blog/1')
+        .set('Accept', 'application/json')
+        .set('Authorization', token)
+        .send(blogsTest[7])
+        .end((err, res) => {
+          expect(res.body).to.be.an('object');
+          expect(res.status).to.equal(400);
+          expect(res.body.error).to.equal('"name" is not allowed');
+          done();
+        });
+    });
+
     it('should return There is no blog with that id', (done) => {
         chai
           .request(app)
@@ -194,21 +268,48 @@ describe('When the user try to create a blog --api/blog', () => {
   });
 
 
-//     // delete user
+    // delete blog
 
-//     describe('When the admin try to delete a specific user--- DELETE user,api/user/id', () => {
-//       it('should return user successfull updated ', (done) => {
-//         chai
-//           .request(app)
-//           .delete('/api/auth/user/1')
-//           .set('Accept', 'application/json')
-//           .set('Authorization', adminToken)
-//           .send(usersTest[1])
-//           .end((err, res) => {
-//             expect(res.body).to.be.an('object');
-//             expect(res.status).to.equal(200);
-//             expect(res.body.message).to.equal('user successfully deleted');
-//             done();
-//           });
-//       });
-//     });
+    describe('When the user try to delete a blog user--- DELETE user,api/blog/id', () => {
+      it('should return user successfull deleted ', (done) => {
+        chai
+          .request(app)
+          .delete('/api/blog/2')
+          .set('Accept', 'application/json')
+          .set('Authorization', token)
+          .end((err, res) => {
+            expect(res.body).to.be.an('object');
+            expect(res.status).to.equal(200);
+            expect(res.body.message).to.equal('blog successfully deleted');
+            done();
+          });
+      });
+
+      it('should return You have not authorized to perform this action', (done) => {
+        chai
+          .request(app)
+          .delete('/api/blog/1')
+          .set('Accept', 'application/json')
+          .set('Authorization', unauthToken)
+          .send(blogsTest[2])
+          .end((err, res) => {
+            expect(res.status).to.equal(401);
+            expect(res.body.status).to.equal(401);
+            expect(res.body.message).to.equal('You are not authorized to perform this action');
+            done();
+          });
+      });
+
+      it('should return There is no blog with that id', (done) => {
+        chai
+          .request(app)
+          .delete('/api/blog/5')
+          .set('Accept', 'application/json')
+          .set('Authorization', token)
+          .send(blogsTest[2])
+          .end((err, res) => {
+            expect(res.status).to.equal(404);
+            done();
+          });
+      });
+    });

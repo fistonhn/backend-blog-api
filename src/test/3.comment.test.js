@@ -48,6 +48,21 @@ describe('When the user commenting --api/auth/signup', () => {
           });
       });
 
+      it('should return comment 2 created successfull', (done) => {
+        chai
+          .request(app)
+          .post('/api/comment/1')
+          .set('Accept', 'application/json')
+          .send(commentsTest[2])
+          .end((err, res) => {
+            expect(res.body).to.be.an('object');
+            expect(res.status).to.equal(201);
+            expect(res.body.status).to.equal(201);
+            expect(res.body.message).to.equal('comment successfully created');
+            done();
+          });
+      });
+
       it('should return There is no blog with that id', (done) => {
         chai
           .request(app)

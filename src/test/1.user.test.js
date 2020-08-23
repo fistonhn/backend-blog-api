@@ -118,6 +118,24 @@ describe('When the user try to signup --api/auth/signup', () => {
             expect(res.body.data).to.have.property('token');
             done();
           });
+        });
+
+          it('should return user created successfull', (done) => {
+            chai
+              .request(app)
+              .post('/api/auth/signup')
+              .set('Accept', 'application/json')
+              .send(usersTest[18])
+              .end((err, res) => {
+                expect(res.body).to.be.an('object');
+                expect(res.status).to.equal(201);
+                expect(res.body.status).to.equal(201);
+                expect(res.body.message).to.equal('User created successfully');
+                expect(res.body.data).to.have.property('token');
+                done();
+              });
+            });
+
 
           it('should return Email already taken', (done) => {
             chai
@@ -128,11 +146,12 @@ describe('When the user try to signup --api/auth/signup', () => {
               .end((err, res) => {
                 expect(res.body).to.be.an('object');
                 expect(res.status).to.equal(409);
+                expect(res.body.status).to.equal(409);
                 expect(res.body.message).to.equal('Email address already taken');
                 done();
               });
           });
-      });
+      
 })
 
 
@@ -302,6 +321,77 @@ describe(' When the user try to login --api/auth/signin', () => {
           done();
         });
     });
+    it('should return user successfull updated ', (done) => {
+      chai
+        .request(app)
+        .patch('/api/auth/user/1')
+        .set('Accept', 'application/json')
+        .set('Authorization', adminToken)
+        .send(usersTest[14])
+        .end((err, res) => {
+          expect(res.body).to.be.an('object');
+          expect(res.status).to.equal(200);
+          expect(res.body.message).to.equal('user successfully updated');
+          done();
+        });
+    });
+    it('should return user successfull updated ', (done) => {
+      chai
+        .request(app)
+        .patch('/api/auth/user/1')
+        .set('Accept', 'application/json')
+        .set('Authorization', adminToken)
+        .send(usersTest[15])
+        .end((err, res) => {
+          expect(res.body).to.be.an('object');
+          expect(res.status).to.equal(200);
+          expect(res.body.message).to.equal('user successfully updated');
+          done();
+        });
+    });
+    it('should return user successfull updated ', (done) => {
+      chai
+        .request(app)
+        .patch('/api/auth/user/1')
+        .set('Accept', 'application/json')
+        .set('Authorization', adminToken)
+        .send(usersTest[16])
+        .end((err, res) => {
+          expect(res.body).to.be.an('object');
+          expect(res.status).to.equal(200);
+          expect(res.body.message).to.equal('user successfully updated');
+          done();
+        });
+    });
+    it('should return user successfull updated ', (done) => {
+      chai
+        .request(app)
+        .patch('/api/auth/user/1')
+        .set('Accept', 'application/json')
+        .set('Authorization', adminToken)
+        .send(usersTest[17])
+        .end((err, res) => {
+          expect(res.body).to.be.an('object');
+          expect(res.status).to.equal(200);
+          expect(res.body.message).to.equal('user successfully updated');
+          done();
+        });
+    });
+
+    it('should return user successfull updated ', (done) => {
+      chai
+        .request(app)
+        .patch('/api/auth/user/5')
+        .set('Accept', 'application/json')
+        .set('Authorization', adminToken)
+        .send(usersTest[17])
+        .end((err, res) => {
+          expect(res.body).to.be.an('object');
+          expect(res.status).to.equal(404);
+          expect(res.body.message).to.equal('No user found');
+          done();
+        });
+    });
 
     it('should return user email is not formed well', (done) => {
       chai
@@ -333,6 +423,20 @@ describe(' When the user try to login --api/auth/signin', () => {
             expect(res.body).to.be.an('object');
             expect(res.status).to.equal(200);
             expect(res.body.message).to.equal('user successfully deleted');
+            done();
+          });
+      });
+      it('should return user successfull updated ', (done) => {
+        chai
+          .request(app)
+          .delete('/api/auth/user/5')
+          .set('Accept', 'application/json')
+          .set('Authorization', adminToken)
+          .send(usersTest[17])
+          .end((err, res) => {
+            expect(res.body).to.be.an('object');
+            expect(res.status).to.equal(404);
+            expect(res.body.message).to.equal('No user found');
             done();
           });
       });
