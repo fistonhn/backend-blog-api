@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon --exec babel-node index.js ",
     "start": "babel-node index.js",
+    "coverage": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
     "test": "nyc --reporter=text --reporter=html mocha ./src/test --require @babel/polyfill --require @babel/register --timeout 10000 --exit"
   },
   "repository": {
