@@ -1,12 +1,12 @@
-class User {
-    constructor(id, role, name, email, password) {
-      this.id = id;
-      this.role = role;
-      this.name = name;
-      this.email = email;
-      this.password = password;
-    }
-  }
+import mongoose from 'mongoose';
+
+const userSchema = mongoose.Schema({
+  role: String,
+  name: String,
+  email: String,
+  password: String
   
-  export default User;
+});
+
+  export default mongoose.model('users', userSchema);
   

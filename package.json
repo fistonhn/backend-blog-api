@@ -7,7 +7,7 @@
     "dev": "nodemon --exec babel-node index.js ",
     "start": "babel-node index.js",
     "coverage": "nyc npm test && nyc report --reporter=text-lcov | coveralls",
-    "test": "nyc --reporter=text --reporter=html mocha ./src/test --require @babel/polyfill --require @babel/register --timeout 10000 --exit"
+    "test": "nyc --reporter=text --reporter=html mocha ./src/test --require @babel/polyfill --require @babel/register --timeout 20000 --exit"
   },
   "repository": {
     "type": "git",
@@ -36,6 +36,7 @@
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
     "mocha": "^8.1.1",
+    "mongoose": "^5.10.2",
     "nyc": "^15.1.0",
     "uuid": "^8.3.0"
   },

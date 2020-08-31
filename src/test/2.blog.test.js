@@ -1,9 +1,12 @@
+import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
 import app from '../../index';
 import blogsTest from '../models/blog.test.data';
 import usersTest from '../models/user.test.data';
+import Blog from '../models/blog.model';
+
 
 import generateToken from '../helper/generateAuthToken';
 
@@ -13,11 +16,24 @@ chai.use(chaiHttp);
 
 
 dotenv.config();
+
+
+before(async (done) => {  
+    await mongoose.connect('mongodb+srv://fistonhn:habimana@cluster0.dazrr.mongodb.net/fistonBlog?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true}, done);
+  
+  })
+  
+  before(async () => {  
+    await Blog.deleteMany()
+  
+  });
+  
  
 
-const token = generateToken(usersTest[3].id,usersTest[3].email, usersTest[3].role);
-const unauthToken = generateToken(usersTest[13].id,usersTest[13].email, usersTest[13].role);
+const token = generateToken(usersTest[3].email, usersTest[3].role);
+const unauthToken = generateToken(usersTest[4].email, usersTest[4].role);
 const invalidToken = ' ';
+
 
 
 
@@ -60,7 +76,7 @@ describe('When the user try to create a blog --api/blog', () => {
     });
 
 
-      it('should return blog created successfull', (done) => {
+      it('should return blog created successfully', (done) => {
         chai
           .request(app)
           .post('/api/blog')
@@ -71,26 +87,11 @@ describe('When the user try to create a blog --api/blog', () => {
             expect(res.body).to.be.an('object');
             expect(res.status).to.equal(201);
             expect(res.body.status).to.equal(201);
-            expect(res.body.message).to.equal('blog successfully created');
+            expect(res.body.message).to.equal('blog created successfully');
             done();
           });
       });
 
-      it('should return blog 2 created successfull', (done) => {
-        chai
-          .request(app)
-          .post('/api/blog')
-          .set('Accept', 'application/json')
-          .set('Authorization', token)
-          .send(blogsTest[3])
-          .end((err, res) => {
-            expect(res.body).to.be.an('object');
-            expect(res.status).to.equal(201);
-            expect(res.body.status).to.equal(201);
-            expect(res.body.message).to.equal('blog successfully created');
-            done();
-          });
-      });
 })
 
 
@@ -114,10 +115,38 @@ describe('When the user try to create a blog --api/blog', () => {
     // get specific blog
 
     describe('When users tries to view specific blog--- GET blog --/api/blog/1', () => {
+
+        const blog = new Blog({
+
+            email: 'fiston@gmail.com',
+            title: 'urugamba rwinkundura', 
+            content: 'urugamba rwinkundura urugamba rwinkundura urugamba rwinkundura', 
+            author: 'Josua'
+          });
+      
+          before(async () => { await blog.save() });
+
+          const blogId = blog.id;
+
+          
+          it('should return Id must be a single string of 24 bytes', (done) => {
+            chai
+              .request(app)
+              .get('/api/blog/45')
+              .set('Authorization', token)
+              .end((err, res) => {
+                expect(res.body).to.be.an('object');
+                expect(res.status).to.equal(400);
+                expect(res.body.status).to.equal(400);
+                expect(res.body.message).to.equal('Id must be a single string of 24 bytes');
+                done();
+              });
+          });  
+
         it('should return specific blog', (done) => {
             chai
               .request(app)
-              .get('/api/blog/1')
+              .get(`/api/blog/${blogId}`)
               .end((err, res) => {
                 expect(res.status).to.equal(200);
                 done();
@@ -127,7 +156,7 @@ describe('When the user try to create a blog --api/blog', () => {
           it('should return There is no blog with that id', (done) => {
             chai
               .request(app)
-              .get('/api/blog/5')
+              .get('/api/blog/5f483cceb7beb81568148ed9')
               .end((err, res) => {
                 expect(res.status).to.equal(404);
                 done();
@@ -137,13 +166,27 @@ describe('When the user try to create a blog --api/blog', () => {
       });
 
 
-  // update user
+  // update blog
 
   describe('When the user try to update his/her specific blog--- PATCH user,api/blog/id', () => {
+
+    const blog = new Blog({
+
+        email: 'fiston@gmail.com',
+        title: 'urugamba rwinkundura', 
+        content: 'urugamba rwinkundura urugamba rwinkundura urugamba rwinkundura', 
+        author: 'Josua'
+      });
+  
+      before(async () => { await blog.save() });
+
+      const blogId = blog.id;
+
+
     it('should return blog successfull updated ', (done) => {
       chai
         .request(app)
-        .patch('/api/blog/1')
+        .patch(`/api/blog/${blogId}`)
         .set('Accept', 'application/json')
         .set('Authorization', token)
         .send(blogsTest[2])
@@ -158,7 +201,7 @@ describe('When the user try to create a blog --api/blog', () => {
     it('should return blog successfull updated ', (done) => {
       chai
         .request(app)
-        .patch('/api/blog/1')
+        .patch(`/api/blog/${blogId}`)
         .set('Accept', 'application/json')
         .set('Authorization', token)
         .send(blogsTest[4])
@@ -172,7 +215,7 @@ describe('When the user try to create a blog --api/blog', () => {
     it('should return blog successfull updated ', (done) => {
       chai
         .request(app)
-        .patch('/api/blog/1')
+        .patch(`/api/blog/${blogId}`)
         .set('Accept', 'application/json')
         .set('Authorization', token)
         .send(blogsTest[5])
@@ -186,7 +229,7 @@ describe('When the user try to create a blog --api/blog', () => {
     it('should return blog successfull updated ', (done) => {
       chai
         .request(app)
-        .patch('/api/blog/1')
+        .patch(`/api/blog/${blogId}`)
         .set('Accept', 'application/json')
         .set('Authorization', token)
         .send(blogsTest[6])
@@ -198,10 +241,10 @@ describe('When the user try to create a blog --api/blog', () => {
         });
     });
 
-    it('should return blog with  name successfull updated ', (done) => {
+    it('should return name is not allowed', (done) => {
       chai
         .request(app)
-        .patch('/api/blog/1')
+        .patch(`/api/blog/${blogId}`)
         .set('Accept', 'application/json')
         .set('Authorization', token)
         .send(blogsTest[7])
@@ -216,7 +259,7 @@ describe('When the user try to create a blog --api/blog', () => {
     it('should return There is no blog with that id', (done) => {
         chai
           .request(app)
-          .patch('/api/blog/5')
+          .patch('/api/blog/5f483cceb7beb81568148ed9')
           .set('Accept', 'application/json')
           .set('Authorization', token)
           .send(blogsTest[2])
@@ -229,7 +272,7 @@ describe('When the user try to create a blog --api/blog', () => {
       it('should return Unauthorised user - Header Not Set', (done) => {
         chai
           .request(app)
-          .patch('/api/blog/1')
+          .patch(`/api/blog/${blogId}`)
           .end((err, res) => {
             expect(res.status).to.equal(401);
             expect(res.body.error).to.equal('Unauthorised - Header Not Set');
@@ -240,7 +283,7 @@ describe('When the user try to create a blog --api/blog', () => {
       it('should return invalid token or expired', (done) => {
         chai
           .request(app)
-          .patch('/api/blog/1')
+          .patch(`/api/blog/${blogId}`)
           .set('Accept', 'application/json')
           .set('Authorization', invalidToken)
           .end((err, res) => {
@@ -254,7 +297,7 @@ describe('When the user try to create a blog --api/blog', () => {
       it('should return You have not authorized to perform this action', (done) => {
         chai
           .request(app)
-          .patch('/api/blog/1')
+          .patch(`/api/blog/${blogId}`)
           .set('Accept', 'application/json')
           .set('Authorization', unauthToken)
           .send(blogsTest[2])
@@ -265,30 +308,45 @@ describe('When the user try to create a blog --api/blog', () => {
             done();
           });
       });
+
+      it('should return Id must be a single string of 24 bytes', (done) => {
+        chai
+          .request(app)
+          .patch('/api/blog/45')
+          .set('Authorization', token)
+          .end((err, res) => {
+            expect(res.body).to.be.an('object');
+            expect(res.status).to.equal(400);
+            expect(res.body.status).to.equal(400);
+            expect(res.body.message).to.equal('Id must be a single string of 24 bytes');
+            done();
+          });
+      });
   });
 
 
     // delete blog
 
     describe('When the user try to delete a blog user--- DELETE user,api/blog/id', () => {
-      it('should return user successfull deleted ', (done) => {
-        chai
-          .request(app)
-          .delete('/api/blog/2')
-          .set('Accept', 'application/json')
-          .set('Authorization', token)
-          .end((err, res) => {
-            expect(res.body).to.be.an('object');
-            expect(res.status).to.equal(200);
-            expect(res.body.message).to.equal('blog successfully deleted');
-            done();
-          });
+
+      const blog = new Blog({
+
+        email: 'fiston@gmail.com',
+        title: 'urugamba rwinkundura', 
+        content: 'urugamba rwinkundura urugamba rwinkundura urugamba rwinkundura', 
+        author: 'Josua'
       });
+  
+      before(async () => { await blog.save() });
+
+      const blogId = blog.id;
+
+
 
       it('should return You have not authorized to perform this action', (done) => {
         chai
           .request(app)
-          .delete('/api/blog/1')
+          .delete(`/api/blog/${blogId}`)
           .set('Accept', 'application/json')
           .set('Authorization', unauthToken)
           .send(blogsTest[2])
@@ -303,12 +361,42 @@ describe('When the user try to create a blog --api/blog', () => {
       it('should return There is no blog with that id', (done) => {
         chai
           .request(app)
-          .delete('/api/blog/5')
+          .delete('/api/blog/5f483cceb7beb81568148ed9')
           .set('Accept', 'application/json')
           .set('Authorization', token)
           .send(blogsTest[2])
           .end((err, res) => {
             expect(res.status).to.equal(404);
+            done();
+          });
+      });
+
+      it('should return user successfull deleted ', (done) => {
+        chai
+          .request(app)
+          .delete(`/api/blog/${blogId}`)
+          .set('Accept', 'application/json')
+          .set('Authorization', token)
+          .end((err, res) => {
+            expect(res.body).to.be.an('object');
+            expect(res.status).to.equal(200);
+            expect(res.body.message).to.equal('blog successfully deleted');
+            done();
+          });
+      });
+
+
+
+      it('should return Id must be a single string of 24 bytes', (done) => {
+        chai
+          .request(app)
+          .delete('/api/blog/45')
+          .set('Authorization', token)
+          .end((err, res) => {
+            expect(res.body).to.be.an('object');
+            expect(res.status).to.equal(400);
+            expect(res.body.status).to.equal(400);
+            expect(res.body.message).to.equal('Id must be a single string of 24 bytes');
             done();
           });
       });

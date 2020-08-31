@@ -1,82 +1,151 @@
-import Blogs from '../models/blog.model';
+import Blog from '../models/blog.model';
 
-const blogs = [ ];
+
 
 
 const createNewBlog = (req, res) => {
 
-    const email = req.authUser.userEmail;
-    const id =  blogs.length + 1;
 
-  const blog = new Blogs(id, email, new Date().toLocaleString(), req.body.title, req.body.content, req.body.author);
+  const email = req.authUser.userEmail;
 
-  blogs.push(blog);
 
-  res.status(201).json({ status: 201, message: 'blog successfully created', data: blog });
+          const blog = new Blog({
+
+            email: email, 
+            title: req.body.title, 
+            content: req.body.content, 
+            author: req.body.author
+            
+          });
+
+
+          blog.save().then(result =>{ 
+            
+            res.status(201).json({ status: 201, message: 'blog created successfully', result });  
+          
+          })
+
+          .catch(error =>{ res.status(500).json({ status: 500, error: 'server error', error }) })
+
 };
 
 const getAllBlogs = (req, res) => {
 
-  const blogFound = blogs.find((blog) => blog );
+  Blog.find()
+  .exec() 
+  .then(docs =>{
 
-  if (!blogFound) return res.status(404).json({ status: 404, message: 'There are no available blogs' });
+    if(docs.length > 0 ){
 
-  const allBlogs = blogs.sort((a, b) => (new Date(b.createdOn)).getTime()
-  - (new Date(a.createdOn).getTime()));
+     res.status(200).json({ status: 200, data: docs.reverse() });
+    } else {
 
-  res.status(200).json({ status: 200, data: allBlogs });
+     res.status(404).json({ status: 404, message: 'There are no available blogs' });
+    }
+
+    
+  })
+  .catch(error =>{ res.status(500).json({ status: 500, error: error }) })
+
+
 };
 
 const getOneBlog = (req, res) => {
-  const blog = blogs.find((blog) => blog.id == req.params.id );
 
-  if (!blog) return res.status(404).json({ status: 404, error: `There is no blog with id ${req.params.id} ` });
+  const id = req.params.id;
+  if(id.length !== 24) return res.status(400).json({ status: 400, message: 'Id must be a single string of 24 bytes' });
 
-  return res.status(200).json({ status: 200, data: blog });
+  Blog.findById(id)
+   .exec() 
+   .then(doc =>{
+
+    if (!doc){
+
+      res.status(404).json({ status: 404, message: 'No blog found' });
+    }else{ 
+
+     res.status(200).json({ status: 200, data: doc }); 
+
+    }
+
+   })
+   .catch(error =>{ res.status(500).json({ status: 500, error: 'something went wrong, check your id first', error }) })
+
 };
 
 const updateBlog = (req, res) => {
 
-  const blog = blogs.find((blog) => blog.id == req.params.id );
 
-  if (!blog) return res.status(404).json({ status: 404, error: `There is no blog with id ${req.params.id} ` });
-
-  const authhEmail = req.authUser.userEmail;
-  if (blog.email != authhEmail) return res.status(401).send({ status: 401, message: 'You are not authorized to perform this action' });
+  const id = req.params.id;
+  if(id.length !== 24) return res.status(400).json({ status: 400, message: 'Id must be a single string of 24 bytes' });
 
 
-  let title =  req.body.title;
-  let content =  req.body.content;
-  let author =  req.body.author;
 
-  if(!title){ title = blog.title; }
-  if(!content){ content = blog.content; }
-  if(!author){ author =blog.author; }
+  Blog.findById(id)
+  .exec() 
+  .then(doc =>{
+
+   if (!doc){
+
+     res.status(404).json({ status: 404, message: 'No blog found' });
+   }else{            
+   
+    const authEmail = req.authUser.userEmail;
+    if (doc.email != authEmail) return res.status(401).send({ status: 401, message: 'You are not authorized to perform this action' });
 
 
-  blog.title = title;
-  blog.content = content;
-  blog.author = author;
+    let email =  req.body.email;
+    let title =  req.body.title;
+    let content =  req.body.content;
+    let author =  req.body.author;
+  
+    if(!email){ email = doc.email; }
+    if(!title){ title = doc.title; }
+    if(!content){ content = doc.content; }
+    if(!author){ author = doc.author; }
+  
+  
+    Blog.updateOne( 
+      
+      {_id: id}, 
+      { $set: {  "email" : email,  "title" : title,  "content": content, "author":  author },
+        $currentDate: { "lastModified": true }  })
+    .exec() 
+    .then( res.status(200).json({ status: 200, message: 'blog successfully updated' }) )
 
-  return res.status(200).json({ status: 200, message: 'blog successfully updated', data: blog });
+   }
+
+  })  .catch(error =>{ res.status(500).json({ status: 500, error: 'something went wrong, check your id first', error }) })
 };
 
 const deleteBlog = (req, res) => {
-     
-  const blog = blogs.find((blog) => blog.id == req.params.id );
 
-  if (!blog) return res.status(404).json({ status: 404, error: `There is no blog with id ${req.params.id} ` });
+const id = req.params.id;
+  if(id.length !== 24) return res.status(400).json({ status: 400, message: 'Id must be a single string of 24 bytes' });
 
+
+
+  Blog.findById(id)
+  .exec() 
+  .then(doc =>{
+
+   if (!doc){
+
+     res.status(404).json({ status: 404, message: 'No blog found' });
+   }else{ 
+   
+    const authEmail = req.authUser.userEmail;
+
+    if (doc.email != authEmail) return res.status(401).send({ status: 401, message: 'You are not authorized to perform this action' });
+
+    Blog.deleteOne({_id: id})
+    .exec() 
+    .then( res.status(200).json({ status: 200, message: 'blog successfully deleted' }))
   
-  const authhEmail = req.authUser.userEmail;
-  if (blog.email != authhEmail) return res.status(401).send({ status: 401, message: 'You are not authorized to perform this action' });
 
-  const index = blogs.indexOf(blog);
-
-  blogs.splice(index, 1);
-
-  return res.status(200).json({ status: 200, message: 'blog successfully deleted' });
+   }
+  })   .catch(error =>{ res.status(500).json({ status: 500, error: 'something went wrong, check your id first', error }) })
 };
 
 
-export { createNewBlog, getAllBlogs, getOneBlog, updateBlog, deleteBlog, blogs };
+export { createNewBlog, getAllBlogs, getOneBlog, updateBlog, deleteBlog };
