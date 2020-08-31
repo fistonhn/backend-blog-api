@@ -1,51 +1,86 @@
 import Comment from '../models/comment.model';
-import { blogs } from '../controller/blog.controller'
+import Blog from '../models/blog.model';
 
-
-const comments = [];
 
 const createComment = (req, res) => {
 
-    const blog = blogs.find((blog) => blog.id == req.params.id );
 
-    if (!blog) return res.status(404).json({ status: 404, error: `There is no blog with id ${req.params.id} ` });
+  const id = req.params.id;
+  if(id.length !== 24) return res.status(400).json({ status: 400, message: 'Id must be a single string of 24 bytes' });
 
-  const id = comments.length + 1;
-  const blogId = req.params.id;
+  Blog.findById(id)
+   .exec() 
+   .then(doc =>{
 
-  const comment = new Comment(id, blogId, req.body.name, req.body.comment, new Date().toLocaleString());
+    if (!doc){
 
-  comments.push(comment);
+      res.status(404).json({ status: 404, message: 'No blog found' });
 
-  res.status(201).json({ status: 201, message: 'comment successfully created', data: comment });
+    }else{ 
+
+      const comment = new Comment({
+ 
+        blogId: doc.id, 
+        name:  req.body.name, 
+        comment: req.body.comment   
+      });
+
+      comment.save().then(result =>{
+        
+        res.status(201).json({ status: 201, message: 'comment created successfully', result });       
+      })
+    }
+
+   })
+   .catch( result =>{ res.status(500).json({ status: 500, error: 'something went wrong, check your id first', result  })}) 
+
+
 };
 
 const getAllComments = (req, res) => {
 
-    const commentFound = comments.find((comment) =>  comment.blogId == req.params.id );
+  const id = req.params.id;
 
+  Comment.find({blogId : id}, function (err, docs){
+       
   
-    if (!commentFound) return res.status(404).json({ status: 404, message: 'There are no created comment' });
+    if (docs.length <= 0){
 
-  
-    const allComments = comments.sort((a, b) => (new Date(b.createdOn)).getTime()
-    - (new Date(a.createdOn).getTime()));
-  
-    res.status(200).json({ status: 200, data: allComments });
-  };
-  
+      res.status(404).send({ status: 404, message: 'There are no created comment' });
+    }else{ 
+      
+      res.status(200).json({ status: 200, data: docs.reverse() });
+    }
+})  
+.catch( result =>{ res.status(500).json({ status: 500, error: 'something went wrong, check your id first', result  })}) 
+
+};
+ 
   const deleteComment = (req, res) => {
-     
-    const comment = comments.find((comment) => comment.id == req.params.id );
-  
-    if (!comment) return res.status(404).json({ status: 404, error: `There is no comment with id ${req.params.id} ` });
 
+    const id = req.params.id;
+  if(id.length !== 24) return res.status(400).json({ status: 400, message: 'Id must be a single string of 24 bytes' });
+
+
+
+  Comment.findById(id)
+  .exec() 
+  .then(doc =>{
+
+   if (!doc){
+
+     res.status(404).json({ status: 404, message: 'No comment  found' });
+   }else{ 
+
+    Comment.deleteOne({_id: id})
+    .exec() 
+    .then( res.status(200).json({ status: 200, message: 'comment successfully deleted' }))
   
-    const index = comments.indexOf(comment);
-  
-    comments.splice(index, 1);
-  
-    return res.status(200).json({ status: 200, message: 'comment successfully deleted' });
+
+   }
+  }) .catch( result =>{ res.status(500).json({ status: 500, error: 'something went wrong, check your id first', result  })}) 
+
+
   };
   
 

@@ -1,9 +1,13 @@
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 import chai from 'chai';
 import chaiHttp from 'chai-http';
+
 import app from '../../index';
 import usersTest from '../models/user.test.data';
 import generateToken from '../helper/generateAuthToken';
+import User from '../models/user.model';
+
 
 
 const { expect } = chai;
@@ -13,10 +17,18 @@ chai.use(chaiHttp);
 dotenv.config();
  
 
-const token = generateToken(usersTest[3].id,usersTest[3].email, usersTest[3].role);
-const adminToken = generateToken(usersTest[10].id,usersTest[10].email, usersTest[10].role);
+const adminToken = generateToken(usersTest[10].email, usersTest[10].role);
 
 
+before(async (done) => {  
+  await mongoose.connect('mongodb+srv://fistonhn:habimana@cluster0.dazrr.mongodb.net/fistonBlog?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true}, done);
+
+})
+
+before(async () => {  
+  await User.deleteMany()
+
+});
 
 
 
@@ -36,6 +48,7 @@ describe('when user try to visit my app ', () => {
 
 
 
+
   // get all users 
 
   describe('When users tries to view all users--- GET user --api/auth/users', () => {
@@ -47,7 +60,7 @@ describe('when user try to visit my app ', () => {
         .set('Authorization', adminToken)
         .end((err, res) => {
           expect(res.status).to.equal(404);
-          expect(res.body.message).to.equal('There are no available users');
+          expect(res.body.message).to.equal('No users found');
           done();
         });
     });
@@ -56,9 +69,12 @@ describe('when user try to visit my app ', () => {
 
 
 
+
 // user sign up
 
 describe('When the user try to signup --api/auth/signup', () => {
+
+
     it('should return Name is required ', (done) => {
       chai
         .request(app)
@@ -105,6 +121,7 @@ describe('When the user try to signup --api/auth/signup', () => {
       });
 
       it('should return user created successfull', (done) => {
+
         chai
           .request(app)
           .post('/api/auth/signup')
@@ -115,11 +132,10 @@ describe('When the user try to signup --api/auth/signup', () => {
             expect(res.status).to.equal(201);
             expect(res.body.status).to.equal(201);
             expect(res.body.message).to.equal('User created successfully');
-            expect(res.body.data).to.have.property('token');
             done();
-          });
         });
-
+  });
+      
           it('should return user created successfull', (done) => {
             chai
               .request(app)
@@ -131,7 +147,6 @@ describe('When the user try to signup --api/auth/signup', () => {
                 expect(res.status).to.equal(201);
                 expect(res.body.status).to.equal(201);
                 expect(res.body.message).to.equal('User created successfully');
-                expect(res.body.data).to.have.property('token');
                 done();
               });
             });
@@ -142,7 +157,7 @@ describe('When the user try to signup --api/auth/signup', () => {
               .request(app)
               .post('/api/auth/signup')
               .set('Accept', 'application/json')
-              .send(usersTest[4])
+              .send(usersTest[3])
               .end((err, res) => {
                 expect(res.body).to.be.an('object');
                 expect(res.status).to.equal(409);
@@ -153,6 +168,25 @@ describe('When the user try to signup --api/auth/signup', () => {
           });
       
 })
+
+
+  // get all users 
+
+  describe('When users tries to view all users--- GET user --api/auth/users', () => {
+    it('should return display all users', (done) => {
+      chai
+        .request(app)
+        .get('/api/auth/users')
+        .set('Authorization', adminToken)
+        .end((err, res) => {
+          expect(res.status).to.equal(200);
+          expect(res.body.status).to.equal(200);
+          done();
+        });
+    });
+
+  });
+  
 
 
       // when user try to login 
@@ -214,7 +248,7 @@ describe(' When the user try to login --api/auth/signin', () => {
           done();
         });
     });
-    it('should user loggin successfull', (done) => {
+    it('should user login successfully', (done) => {
       chai
         .request(app)
         .post('/api/auth/signin')
@@ -224,62 +258,53 @@ describe(' When the user try to login --api/auth/signin', () => {
           expect(res.body).to.be.an('object');
           expect(res.status).to.equal(200);
           expect(res.body.status).to.equal(200);
-          expect(res.body.message).to.equal('loggin successfull');
-          expect(res.body.data).to.have.property('token');
+          expect(res.body.message).to.equal('login successfully');
           done();
         });
     });
   });
 
 
-  
-  // create admin user 
-
-  describe('When you create admin user --api/auth/signup', () => {
-    it('should return admin created successfull', (done) => {
-      chai
-        .request(app)
-        .post('/api/auth/signup')
-        .set('Accept', 'application/json')
-        .send(usersTest[10])
-        .end((err, res) => {
-          expect(res.body).to.be.an('object');
-          expect(res.status).to.equal(201);
-          expect(res.body.status).to.equal(201);
-          expect(res.body.message).to.equal('User created successfully');
-          expect(res.body.data).to.have.property('token');
-          done();
-        });
-    });
-  });
-
-
-
-  // get all users 
-
-  describe('When users tries to view all users--- GET user --api/auth/users', () => {
-    it('should return display all users', (done) => {
-      chai
-        .request(app)
-        .get('/api/auth/users')
-        .set('Authorization', adminToken)
-        .end((err, res) => {
-          expect(res.status).to.equal(200);
-          expect(res.body.status).to.equal(200);
-          done();
-        });
-    });
-
-  });
-  
 
   // admin view specific user
 
   describe('When the admin try to view a specific user--- GET user,api/user/id', () => {
-    it('should return user not found ', (done) => {
+
+    
+    const user = new User({
+
+      role: 'admin', 
+      name: 'Josua', 
+      email: 'Josua@gmail.com', 
+      password: '111111'
+    });
+
+    before(async () => {  
+
+      await user.save()
+    
+    });
+    const adminId = user.id;
+
+
+    
+    it('should return Id must be a single string of 24 bytes', (done) => {
       chai
         .request(app)
         .get('/api/auth/user/45')
+        .set('Authorization', adminToken)
+        .end((err, res) => {
+          expect(res.body).to.be.an('object');
+          expect(res.status).to.equal(400);
+          expect(res.body.status).to.equal(400);
+          expect(res.body.message).to.equal('Id must be a single string of 24 bytes');
+          done();
+        });
+    });
+    it('should return user not found ', (done) => {
+      chai
+        .request(app)
+        .get('/api/auth/user/5f483cceb7beb81568148ed9')
         .set('Authorization', adminToken)
         .end((err, res) => {
           expect(res.body).to.be.an('object');
@@ -292,7 +317,7 @@ describe(' When the user try to login --api/auth/signin', () => {
     it('should return selected user', (done) => {
       chai
         .request(app)
-        .get('/api/auth/user/1')
+        .get(`/api/auth/user/${adminId}`)
         .set('Authorization', adminToken)
         .end((err, res) => {
           expect(res.status).to.equal(200);
@@ -304,13 +329,47 @@ describe(' When the user try to login --api/auth/signin', () => {
 
 
 
-  // update user
+//   // update user
 
   describe('When the admin try to update a specific user--- PATCH user,api/user/id', () => {
+
+      
+    const user = new User({
+
+      role: 'admin', 
+      name: 'Joy', 
+      email: 'Joy@gmail.com', 
+      password: '211111'
+    });
+
+    before(async () => {  
+
+      await user.save()
+    
+    });
+    const adminId = user.id;
+
+
+
+
+    it('should return Id must be a single string of 24 bytes', (done) => {
+      chai
+        .request(app)
+        .patch('/api/auth/user/45')
+        .set('Authorization', adminToken)
+        .end((err, res) => {
+          expect(res.body).to.be.an('object');
+          expect(res.status).to.equal(400);
+          expect(res.body.status).to.equal(400);
+          expect(res.body.message).to.equal('Id must be a single string of 24 bytes');
+          done();
+        });
+    });
+
     it('should return user successfull updated ', (done) => {
       chai
         .request(app)
-        .patch('/api/auth/user/1')
+        .patch(`/api/auth/user/${adminId}`)
         .set('Accept', 'application/json')
         .set('Authorization', adminToken)
         .send(usersTest[11])
@@ -321,67 +380,12 @@ describe(' When the user try to login --api/auth/signin', () => {
           done();
         });
     });
-    it('should return user successfull updated ', (done) => {
-      chai
-        .request(app)
-        .patch('/api/auth/user/1')
-        .set('Accept', 'application/json')
-        .set('Authorization', adminToken)
-        .send(usersTest[14])
-        .end((err, res) => {
-          expect(res.body).to.be.an('object');
-          expect(res.status).to.equal(200);
-          expect(res.body.message).to.equal('user successfully updated');
-          done();
-        });
-    });
-    it('should return user successfull updated ', (done) => {
-      chai
-        .request(app)
-        .patch('/api/auth/user/1')
-        .set('Accept', 'application/json')
-        .set('Authorization', adminToken)
-        .send(usersTest[15])
-        .end((err, res) => {
-          expect(res.body).to.be.an('object');
-          expect(res.status).to.equal(200);
-          expect(res.body.message).to.equal('user successfully updated');
-          done();
-        });
-    });
-    it('should return user successfull updated ', (done) => {
-      chai
-        .request(app)
-        .patch('/api/auth/user/1')
-        .set('Accept', 'application/json')
-        .set('Authorization', adminToken)
-        .send(usersTest[16])
-        .end((err, res) => {
-          expect(res.body).to.be.an('object');
-          expect(res.status).to.equal(200);
-          expect(res.body.message).to.equal('user successfully updated');
-          done();
-        });
-    });
-    it('should return user successfull updated ', (done) => {
-      chai
-        .request(app)
-        .patch('/api/auth/user/1')
-        .set('Accept', 'application/json')
-        .set('Authorization', adminToken)
-        .send(usersTest[17])
-        .end((err, res) => {
-          expect(res.body).to.be.an('object');
-          expect(res.status).to.equal(200);
-          expect(res.body.message).to.equal('user successfully updated');
-          done();
-        });
-    });
 
-    it('should return user successfull updated ', (done) => {
+
+    it('should return No user found', (done) => {
       chai
         .request(app)
-        .patch('/api/auth/user/5')
+        .patch('/api/auth/user/5f483cceb7beb81568148ed9')
         .set('Accept', 'application/json')
         .set('Authorization', adminToken)
         .send(usersTest[17])
@@ -396,7 +400,7 @@ describe(' When the user try to login --api/auth/signin', () => {
     it('should return user email is not formed well', (done) => {
       chai
         .request(app)
-        .patch('/api/auth/user/1')
+        .patch(`/api/auth/user/${adminId}`)
         .set('Accept', 'application/json')
         .set('Authorization', adminToken)
         .send(usersTest[12])
@@ -412,10 +416,43 @@ describe(' When the user try to login --api/auth/signin', () => {
     // delete user
 
     describe('When the admin try to delete a specific user--- DELETE user,api/user/id', () => {
-      it('should return user successfull updated ', (done) => {
+
+        
+    const user = new User({
+
+      role: 'admin', 
+      name: 'Joy', 
+      email: 'Joy@gmail.com', 
+      password: '211111'
+    });
+
+    before(async () => {  
+
+      await user.save()
+    
+    });
+    const adminId = user.id;
+
+
+
+      it('should return Id must be a single string of 24 bytes', (done) => {
         chai
           .request(app)
-          .delete('/api/auth/user/1')
+          .delete('/api/auth/user/45')
+          .set('Authorization', adminToken)
+          .end((err, res) => {
+            expect(res.body).to.be.an('object');
+            expect(res.status).to.equal(400);
+            expect(res.body.status).to.equal(400);
+            expect(res.body.message).to.equal('Id must be a single string of 24 bytes');
+            done();
+          });
+      });
+
+      it('should return user successfully deleted ', (done) => {
+        chai
+          .request(app)
+          .delete(`/api/auth/user/${adminId}`)
           .set('Accept', 'application/json')
           .set('Authorization', adminToken)
           .send(usersTest[1])
@@ -429,7 +466,7 @@ describe(' When the user try to login --api/auth/signin', () => {
       it('should return user successfull updated ', (done) => {
         chai
           .request(app)
-          .delete('/api/auth/user/5')
+          .delete('/api/auth/user/5f483cceb7beb81568148ed9')
           .set('Accept', 'application/json')
           .set('Authorization', adminToken)
           .send(usersTest[17])

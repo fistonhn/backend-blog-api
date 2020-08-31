@@ -1,51 +1,90 @@
 import Messages from '../models/message.modal';
 
 
-const messages = [ ];
-
-
 const createNewMessage = (req, res) => {
 
-  const id =  messages.length + 1;
+          const message = new Messages({
 
-  const message = new Messages(id, new Date().toLocaleString(), req.body.email, req.body.name, req.body.message);
+            email: req.body.email, 
+            name: req.body.name, 
+            message: req.body.message
+            
+          });
 
-  messages.push(message);
+          message.save()
+          .then(result =>{ res.status(201).json({ status: 201, message: 'message created successfully', result }) })
 
-  res.status(201).json({ status: 201, message: 'message successfully created', data: message });
+          .catch(error =>{res.status(500).json({ status: 500, error: 'server error', error })})
 };
 
 const getAllMessages = (req, res) => {
 
-    const messageFound = messages.find((message) => message );
-  
-    if (!messageFound) return res.status(404).json({ status: 404, message: 'No available messages' });
 
-    const allMessages = messages.sort((a, b) => (new Date(b.createdOn)).getTime()
-    - (new Date(a.createdOn).getTime()));
   
-    res.status(200).json({ status: 200, data: allMessages });
+  Messages.find()
+  .exec() 
+  .then(docs =>{
+
+    if(docs.length > 0 ){
+
+     res.status(200).json({ status: 200, data: docs.reverse() });
+    } else {
+
+     res.status(404).json({ status: 404, message: 'There are no available messages' });
+    }
+
+    
+  }) .catch(error =>{res.status(500).json({ status: 500, error: 'server error', error })})
 };
 
 const getOneMessage = (req, res) => {
-const message = messages.find((message) => message.id == req.params.id );
 
-if (!message) return res.status(404).json({ status: 404, error: `There is no message with id: ${req.params.id} ` });
+  const id = req.params.id;
+  if(id.length !== 24) return res.status(400).json({ status: 400, message: 'Id must be a single string of 24 bytes' });
 
-return res.status(200).json({ status: 200, data: message });
+  Messages.findById(id)
+   .exec() 
+   .then(doc =>{
+
+    if (!doc){
+
+      res.status(404).json({ status: 404, message: 'No message found' });
+    }else{ 
+
+     res.status(200).json({ status: 200, data: doc }); 
+
+    }
+
+   })
+   .catch(error =>{ res.status(500).json({ status: 500, error: 'something went wrong, check your id first', error  }) })
+
 };
 
 const deleteMessage = (req, res) => {
-     
-    const message = messages.find((message) => message.id == req.params.id );
+
+
+  const id = req.params.id;
+  if(id.length !== 24) return res.status(400).json({ status: 400, message: 'Id must be a single string of 24 bytes' });
+
+
+
+  Messages.findById(id)
+  .exec() 
+  .then(doc =>{
+
+   if (!doc){
+
+     res.status(404).json({ status: 404, message: 'No message found' });
+   }else{ 
+
+    Messages.deleteOne({_id: id})
+    .exec() 
+    .then( res.status(200).json({ status: 200, message: 'message successfully deleted' }))
   
-    if (!message) return res.status(404).json({ status: 404, error: `There is no message with id: ${req.params.id} ` });
-  
-    const index = messages.indexOf(message);
-  
-    messages.splice(index, 1);
-  
-    return res.status(200).json({ status: 200, message: 'message successfully deleted' });
+
+   }
+  })  .catch(error =>{ res.status(500).json({ status: 500, error: 'something went wrong, check your id first', error }) })
+
 };
   
 

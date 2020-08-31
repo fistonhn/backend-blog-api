@@ -15,6 +15,7 @@ const blogInput = (req) => {
 const blogUpdateInput = (req) => {
   const schema = Joi.object().keys({
     
+      email: Joi.string().email().optional(),
       title: Joi.string().optional().min(3).max(150),
       content: Joi.string().optional().min(5),
       author: Joi.string().optional(),

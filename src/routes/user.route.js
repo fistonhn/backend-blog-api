@@ -10,9 +10,9 @@ usersRouter.post('/auth/signup', [validateSignup], signup);
 
 usersRouter.post('/auth/signin', [validateLogin], login);
 
-usersRouter.get('/auth/users', [verifyAdminToken], getAllUsers);
+usersRouter.get('/auth/users', [verifyAdminToken],  getAllUsers);
 
-usersRouter.get('/auth/user/:id', [verifyAdminToken], getSpecificUser);
+usersRouter.get('/auth/user/:id', [verifyAdminToken],  getSpecificUser);
 
 usersRouter.patch('/auth/user/:id', [verifyAdminToken, validateUserUpdate], updateSpecificUser);
 
